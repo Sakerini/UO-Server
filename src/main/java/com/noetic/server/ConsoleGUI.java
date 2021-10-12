@@ -1,5 +1,6 @@
 package com.noetic.server;
 
+import com.noetic.server.enums.LogType;
 import com.noetic.server.handlers.command.AccountCommandHandler;
 import com.noetic.server.handlers.command.CommandHandler;
 
@@ -68,5 +69,11 @@ public class ConsoleGUI {
                 command.handleCommand(cmd.split(" "));
             }
         }
+    }
+
+    public void writeMessage(LogType logType, String message) {
+        String type = String.format("[%s]", logType.name());
+        textArea.append(type + " " + message + "\n");
+        textArea.setCaretPosition(textArea.getDocument().getLength());
     }
 }
