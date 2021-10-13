@@ -10,7 +10,7 @@ public class Main {
             Configuration.load();
             new GameServer();
         } catch (IOException e) {
-            System.out.println("Unable to start the gameserver: ");
+            System.out.println("Unable to start the game server: ");
             e.printStackTrace();
         }
     }

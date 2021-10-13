@@ -21,7 +21,4 @@ public abstract class CommandHandler {
     public AccountLevel getLevel() {
         return level;
     }
-
-    @Override
-    public abstract String toString();
 }

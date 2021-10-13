@@ -7,6 +7,7 @@ import com.noetic.server.domain.connections.WorldConnection;
 import com.noetic.server.enums.LogType;
 import com.noetic.server.utils.Configuration;
 
+import java.io.Console;
 import java.io.IOException;
 import java.util.Map;
 import java.util.logging.Level;
@@ -15,7 +16,7 @@ import java.util.logging.Logger;
 public class GameServer {
 
     private Server world;
-    private ConsoleGUI consoleGUI;
+    private static ConsoleGUI consoleGUI;
 
     public GameServer () throws IOException {
         System.setProperty("java.util.logging.SimpleFormatter.format",
@@ -49,6 +50,10 @@ public class GameServer {
             consoleGUI.writeMessage(LogType.Server, msg);
         } else
             stop();
+    }
+
+    public static ConsoleGUI getServerConsole() {
+        return consoleGUI;
     }
 
     /**
