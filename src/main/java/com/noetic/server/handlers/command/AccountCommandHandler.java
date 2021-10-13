@@ -3,14 +3,22 @@ package com.noetic.server.handlers.command;
 import com.noetic.server.GameServer;
 import com.noetic.server.enums.AccountLevel;
 import com.noetic.server.enums.LogType;
+import com.noetic.server.service.AccountService;
+import com.noetic.server.service.impl.AccountServiceImpl;
+import com.noetic.server.utils.BCrypt;
+import lombok.SneakyThrows;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.security.MessageDigest;
 import java.util.*;
 
 public class AccountCommandHandler extends CommandHandler {
+    private final int OK = 0;
+    private final int ARGUMENTS_ERROR = -1;
 
-    private final HashMap<String, Method> subCommands = new LinkedHashMap<String, Method>();
+    private final HashMap<String, Method> subCommands = new LinkedHashMap<>();
+    private final AccountService accountService = new AccountServiceImpl();
 
     public AccountCommandHandler() {
         super("account", AccountLevel.Administrator);
@@ -23,8 +31,24 @@ public class AccountCommandHandler extends CommandHandler {
         }
     }
 
+    @SneakyThrows
     private void handleCreation(String[] args) {
-        GameServer.getServerConsole().writeMessage(LogType.Server, "Account is Creating xD");
+        if (args.length != 4) {
+            GameServer.getServerConsole().writeMessage(LogType.Server, "Usage: account create [username] [password].");
+            return;
+        }
+
+        String username = args[2].toUpperCase();
+        String password = args[3];
+
+        MessageDigest md= MessageDigest.getInstance("SHA-256");
+        byte[] hash = md.digest(password.getBytes());
+        String shaHashedPassword = BCrypt.BytesToHex (hash);
+
+        String bcrypt_salt = BCrypt.gensalt(12);
+        String bcrypt_hash = BCrypt.hashpw(shaHashedPassword + GameServer.SALT, bcrypt_salt);
+
+        accountService.createAccount(username, bcrypt_hash, bcrypt_salt);
     }
 
     @Override

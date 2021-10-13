@@ -12,6 +12,7 @@ public class Configuration {
     private static final String FILE_RESOURCE = "config.cfg";
 
     public static String worldServerPort;
+    public static String accountDataPath;
 
     public static void load() {
         Properties properties = new Properties();
@@ -23,6 +24,8 @@ public class Configuration {
             properties.load(istream);
 
             worldServerPort = String.valueOf(properties.getProperty("world_server_port"));
+            accountDataPath = String.valueOf(properties.getProperty("account_data_path"));
+
 
             istream.close();
 

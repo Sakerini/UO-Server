@@ -15,6 +15,9 @@ import java.util.logging.Logger;
 
 public class GameServer {
 
+    public static final String SALT = "chupakabra";
+
+
     private Server world;
     private static ConsoleGUI consoleGUI;
 
