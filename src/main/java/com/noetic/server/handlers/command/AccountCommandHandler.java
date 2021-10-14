@@ -14,8 +14,8 @@ import java.security.MessageDigest;
 import java.util.*;
 
 public class AccountCommandHandler extends CommandHandler {
-    private final int OK = 0;
-    private final int ARGUMENTS_ERROR = -1;
+    private final static int OK = 0;
+    private final static int ARGUMENTS_ERROR = -1;
 
     private final HashMap<String, Method> subCommands = new LinkedHashMap<>();
     private final AccountService accountService = new AccountServiceImpl();

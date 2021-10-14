@@ -1,6 +1,5 @@
 package com.noetic.server.service.impl;
 
-import com.esotericsoftware.kryonet.Connection;
 import com.noetic.server.GameServer;
 import com.noetic.server.domain.model.Account;
 import com.noetic.server.enums.AccountLevel;
@@ -20,7 +19,7 @@ import java.util.logging.Logger;
 
 public class AccountServiceImpl implements AccountService {
 
-    private static List<Account> accounts = new ArrayList<>();
+    private static final List<Account> accounts = new ArrayList<>();
 
     @Override
     public QueueStatus createAccount(String username, String hash, String salt) {

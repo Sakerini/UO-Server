@@ -5,12 +5,12 @@ import lombok.Data;
 @Data
 public class GameCharacter {
 
-    private String Name;
-    private int ZoneID;
-    private int RaceID;
-    private int RealmID;
-    private float X, Y;
-    private int Direction;
-    private int Level;
-    private int XP;
+    private String name;
+    private int zoneID;
+    private int raceID;
+    private int realmID;
+    private float x, y;
+    private int direction;
+    private int level;
+    private int xp;
 }
