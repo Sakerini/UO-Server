@@ -7,19 +7,32 @@ import com.noetic.server.enums.LogType;
 import com.noetic.server.enums.QueueStatus;
 import com.noetic.server.service.AccountService;
 import com.noetic.server.utils.Configuration;
+import org.w3c.dom.CDATASection;
 
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.*;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class AccountServiceImpl implements AccountService {
-
     private static final List<Account> accounts = new ArrayList<>();
+
+    public AccountServiceImpl() {
+        File[] accFiles = new File(Configuration.accountDataPath).listFiles();
+        if (Objects.nonNull(accFiles)) {
+            for (File file : accFiles) {
+                if (file.isDirectory()) {
+                    String name = file.getName();
+                    File dataFile = new File(file.getAbsolutePath() + "/" + name + ".data");
+                    if (dataFile.exists()) {
+                        loadAccount(dataFile);
+                    }
+                }
+            }
+        }
+    }
 
     @Override
     public QueueStatus createAccount(String username, String hash, String salt) {
@@ -32,7 +45,6 @@ public class AccountServiceImpl implements AccountService {
                 writer.writeUTF(salt);
                 writer.writeInt(AccountLevel.Player.getLevel());
 
-                GameServer.getServerConsole().writeMessage(LogType.Server, "Account created: " + username);
                 Account newAccount = new Account();
                 newAccount.setUsername(username);
                 newAccount.setHashedPassword(hash);
@@ -41,13 +53,37 @@ public class AccountServiceImpl implements AccountService {
                 return QueueStatus.Success;
             } catch (IOException ex) {
                 GameServer.getServerConsole().writeMessage(LogType.Server, "Unable to create account. See console log.");
-                Logger.getLogger("server").log(Level.SEVERE, "Failed to create account '{0}'; {1}", new Object[] { username, ex.getMessage() });
+                Logger.getLogger("server").log(Level.SEVERE, "Failed to create account '{0}'; {1}", new Object[]{username, ex.getMessage()});
                 return QueueStatus.Error;
             }
         } else {
             GameServer.getServerConsole().writeMessage(LogType.Server, "Account '" + username + "' already exists.");
             return QueueStatus.Failed;
         }
+    }
+
+    @Override
+    public QueueStatus deleteAccount(String username) {
+        List<Account> imya = accounts;
+        for (Account account : accounts) {
+            if (account.getUsername().equalsIgnoreCase(username)) {
+                File accountFolder = new File(Configuration.accountDataPath + "/" + username);
+                deleteDirectory(accountFolder);
+            }
+        }
+        return QueueStatus.Failed;
+    }
+
+    private void deleteDirectory(File file) {
+        File[] accFiles = new File(Configuration.accountDataPath).listFiles();
+        if (Objects.nonNull(accFiles)) {
+            for (File f : accFiles) {
+                if (!Files.isSymbolicLink(f.toPath())) {
+                    deleteDirectory(f);
+                }
+            }
+        }
+        file.delete();
     }
 
     @Override
@@ -65,5 +101,25 @@ public class AccountServiceImpl implements AccountService {
         //todo check auth connections
         //todo check world connections
         return false;
+    }
+
+    private void loadAccount(File data) {
+        try {
+            DataInputStream stream = new DataInputStream(new FileInputStream(data));
+            Account account = new Account();
+            account.setUsername(stream.readUTF());
+            account.setHashedPassword(stream.readUTF());
+            account.setSalt(stream.readUTF());
+            int level = stream.readInt();
+            for (AccountLevel accountLevel : AccountLevel.values()) {
+                if (accountLevel.getLevel() == level) {
+                    account.setSecurity(accountLevel);
+                }
+            }
+            accounts.add(account);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }

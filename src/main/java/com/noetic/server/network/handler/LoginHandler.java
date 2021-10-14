@@ -15,7 +15,7 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class LoginHandler implements PacketHandler{
+public class LoginHandler implements PacketHandler {
 
     private final static int UNKNOWN = 10;
     private final static int ONLINE = 2;
