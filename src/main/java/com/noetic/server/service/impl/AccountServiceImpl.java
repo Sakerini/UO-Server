@@ -1,5 +1,6 @@
 package com.noetic.server.service.impl;
 
+import com.esotericsoftware.kryonet.Connection;
 import com.noetic.server.GameServer;
 import com.noetic.server.domain.model.Account;
 import com.noetic.server.enums.AccountLevel;
@@ -19,7 +20,7 @@ import java.util.logging.Logger;
 
 public class AccountServiceImpl implements AccountService {
 
-    private static List<Account> Accounts = new ArrayList<>();
+    private static List<Account> accounts = new ArrayList<>();
 
     @Override
     public QueueStatus createAccount(String username, String hash, String salt) {
@@ -37,7 +38,7 @@ public class AccountServiceImpl implements AccountService {
                 newAccount.setUsername(username);
                 newAccount.setHashedPassword(hash);
                 newAccount.setSalt(salt);
-                Accounts.add(newAccount);
+                accounts.add(newAccount);
                 return QueueStatus.Success;
             } catch (IOException ex) {
                 GameServer.getServerConsole().writeMessage(LogType.Server, "Unable to create account. See console log.");
@@ -48,5 +49,22 @@ public class AccountServiceImpl implements AccountService {
             GameServer.getServerConsole().writeMessage(LogType.Server, "Account '" + username + "' already exists.");
             return QueueStatus.Failed;
         }
+    }
+
+    @Override
+    public Account getAccount(String username) {
+        for (Account account : accounts) {
+            if (account.getUsername().equalsIgnoreCase(username)) {
+                return account;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public boolean isOnline(String username) {
+        //todo check auth connections
+        //todo check world connections
+        return false;
     }
 }

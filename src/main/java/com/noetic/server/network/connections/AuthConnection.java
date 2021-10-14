@@ -1,4 +1,4 @@
-package com.noetic.server.domain.connections;
+package com.noetic.server.network.connections;
 
 import com.esotericsoftware.kryonet.Connection;
 import com.noetic.server.domain.model.Account;
