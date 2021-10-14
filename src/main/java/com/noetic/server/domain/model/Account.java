@@ -8,15 +8,15 @@ import java.util.List;
 
 @Data
 public class Account {
-    private String Username;
-    private String HashedPassword;
-    private String Salt;
-    private AccountLevel Security;
-    private List<GameCharacter> Characters = new ArrayList<>();
-    private GameCharacter OnlineCharacter;
-    private int RealmID;
+    private String username;
+    private String hashedPassword;
+    private String salt;
+    private AccountLevel security;
+    private List<GameCharacter> characters = new ArrayList<>();
+    private GameCharacter onlineCharacter;
+    private int realmID;
 
     public void RemoveCharacter(String name) {
-        Characters.removeIf(n -> n.getName().equalsIgnoreCase(name));
+        characters.removeIf(n -> n.getName().equalsIgnoreCase(name));
     }
 }

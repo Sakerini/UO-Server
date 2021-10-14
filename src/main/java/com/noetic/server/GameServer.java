@@ -14,7 +14,6 @@ import com.noetic.server.utils.Configuration;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -22,10 +21,10 @@ import java.util.logging.Logger;
 
 public class GameServer {
 
-    public static final String SALT = "chupakabra";
+    public static final String SALT = Configuration.saltKey;
 
-    private Server world;
-    private Server authServer;
+    private final Server world;
+    private final Server authServer;
     private static ConsoleGUI consoleGUI;
 
     private final Map<String, PacketHandler> packetHandlers = new HashMap<>();

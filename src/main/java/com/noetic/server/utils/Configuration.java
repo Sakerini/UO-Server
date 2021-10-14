@@ -14,6 +14,7 @@ public class Configuration {
     public static String worldServerPort;
     public static String authServerPort;
     public static String accountDataPath;
+    public static String saltKey;
 
     public static void load() {
         Properties properties = new Properties();
@@ -27,6 +28,7 @@ public class Configuration {
             worldServerPort = String.valueOf(properties.getProperty("world_server_port"));
             authServerPort = String.valueOf(properties.getProperty("auth_server_port"));
             accountDataPath = String.valueOf(properties.getProperty("account_data_path"));
+            saltKey = String.valueOf(properties.getProperty("salt_key"));
 
 
             istream.close();

@@ -12,10 +12,10 @@ import java.util.List;
 
 public class ConsoleGUI {
 
-    private GameServer gameServer;
-    private List<CommandHandler> commands;
+    private final GameServer gameServer;
+    private final List<CommandHandler> commands;
 
-    private JFrame frame;
+    private final JFrame frame = new JFrame();
     private JTextField textField;
     private JTextArea textArea;
 
@@ -27,7 +27,6 @@ public class ConsoleGUI {
     }
 
     private void initialize() {
-        frame = new JFrame();
         frame.setResizable(false);
         frame.setTitle("University Online - Game Server");
         frame.setBounds(100, 100, 476, 288);
