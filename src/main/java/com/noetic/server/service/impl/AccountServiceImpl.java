@@ -64,18 +64,23 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public QueueStatus deleteAccount(String username) {
-        List<Account> imya = accounts;
         for (Account account : accounts) {
             if (account.getUsername().equalsIgnoreCase(username)) {
                 File accountFolder = new File(Configuration.accountDataPath + "/" + username);
-                deleteDirectory(accountFolder);
+                try {
+                    deleteDirectory(accountFolder);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return QueueStatus.Error;
+                }
+                return QueueStatus.Success;
             }
         }
         return QueueStatus.Failed;
     }
 
-    private void deleteDirectory(File file) {
-        File[] accFiles = new File(Configuration.accountDataPath).listFiles();
+    private void deleteDirectory(File file) throws IOException {
+        File[] accFiles = file.listFiles();
         if (Objects.nonNull(accFiles)) {
             for (File f : accFiles) {
                 if (!Files.isSymbolicLink(f.toPath())) {
@@ -83,7 +88,10 @@ public class AccountServiceImpl implements AccountService {
                 }
             }
         }
-        file.delete();
+        boolean delete = file.delete();
+        if (!delete) {
+            throw new IOException();
+        }
     }
 
     @Override
@@ -117,6 +125,7 @@ public class AccountServiceImpl implements AccountService {
                 }
             }
             accounts.add(account);
+            stream.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
