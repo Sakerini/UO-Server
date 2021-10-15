@@ -3,6 +3,7 @@ package com.noetic.server.handlers.command;
 import com.noetic.server.GameServer;
 import com.noetic.server.enums.AccountLevel;
 import com.noetic.server.enums.LogType;
+import com.noetic.server.enums.QueueStatus;
 import com.noetic.server.service.AccountService;
 import com.noetic.server.service.impl.AccountServiceImpl;
 import com.noetic.server.utils.BCrypt;
@@ -25,6 +26,7 @@ public class AccountCommandHandler extends CommandHandler {
 
         /** Register sub-commands with a method. **/
         try {
+            subCommands.put("delete", this.getClass().getDeclaredMethod("handleDeletion", String[].class));
             subCommands.put("create", this.getClass().getDeclaredMethod("handleCreation", String[].class));
         } catch (NoSuchMethodException | SecurityException e) {
             e.printStackTrace();
@@ -41,14 +43,33 @@ public class AccountCommandHandler extends CommandHandler {
         String username = args[2].toUpperCase();
         String password = args[3];
 
-        MessageDigest md= MessageDigest.getInstance("SHA-256");
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
         byte[] hash = md.digest(password.getBytes());
-        String shaHashedPassword = BCrypt.BytesToHex (hash);
+        String shaHashedPassword = BCrypt.BytesToHex(hash);
 
         String bcrypt_salt = BCrypt.gensalt(12);
         String bcrypt_hash = BCrypt.hashpw(shaHashedPassword + GameServer.SALT, bcrypt_salt);
 
-        accountService.createAccount(username, bcrypt_hash, bcrypt_salt);
+        QueueStatus result = accountService.createAccount(username, bcrypt_hash, bcrypt_salt);
+        if (result.equals(QueueStatus.Success))
+            GameServer.getServerConsole().writeMessage(LogType.Server, "Account created: " + username);
+        else
+            GameServer.getServerConsole().writeMessage(LogType.Server, "Error creating account: " + username);
+    }
+
+    private void handleDeletion(String[] args) {
+        if (args.length != 3) {
+            GameServer.getServerConsole().writeMessage(LogType.Server, "Usage: account delete [username].");
+            return;
+        }
+
+        String username = args[2].toUpperCase();
+        QueueStatus result = accountService.deleteAccount(username);
+        if (result.equals(QueueStatus.Success))
+            GameServer.getServerConsole().writeMessage(LogType.Server, "Account " + username + " deleted.");
+        else
+            GameServer.getServerConsole().writeMessage(LogType.Server, "Error deleting account: " + username);
+
     }
 
     @Override
@@ -76,7 +97,7 @@ public class AccountCommandHandler extends CommandHandler {
 
     private void invokeHandlingMethod(Method method, String[] args) {
         try {
-            method.invoke(this, (Object)args);
+            method.invoke(this, (Object) args);
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             e.printStackTrace();
         }
@@ -92,7 +113,7 @@ public class AccountCommandHandler extends CommandHandler {
 
         for (int i = 0; i < subs.size(); i++) {
             String str = subs.get(i);
-            if (i+1 != subs.size())
+            if (i + 1 != subs.size())
                 buffer.append(str).append(", ");
             else
                 buffer.append(str);
