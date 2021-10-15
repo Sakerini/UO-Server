@@ -31,6 +31,7 @@ public class AccountServiceImpl implements AccountService {
                     }
                 }
             }
+            GameServer.getServerConsole().writeMessage(LogType.Server, ("Loaded " + accounts.size() + " accounts"));
         }
     }
 

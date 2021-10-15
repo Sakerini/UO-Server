@@ -33,7 +33,8 @@ public class GameServer {
         System.setProperty("java.util.logging.SimpleFormatter.format",
                 "%4$s: %5$s [%1$tc]%n");
 
-        consoleGUI = new ConsoleGUI(this);
+        consoleGUI = new ConsoleGUI();
+        consoleGUI.initialize(this);
 
         packetHandlers.put("cs_login", new LoginHandler());
 

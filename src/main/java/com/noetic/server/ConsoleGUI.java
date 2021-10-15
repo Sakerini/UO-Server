@@ -12,21 +12,15 @@ import java.util.List;
 
 public class ConsoleGUI {
 
-    private final GameServer gameServer;
-    private final List<CommandHandler> commands;
+    private GameServer gameServer;
+    private final List<CommandHandler> commands = new ArrayList<>();
 
     private final JFrame frame = new JFrame();
     private JTextField textField;
     private JTextArea textArea;
 
-    public ConsoleGUI(GameServer server) {
+    public void initialize(GameServer server) {
         this.gameServer = server;
-        commands = new ArrayList<>();
-        commands.add(new AccountCommandHandler());
-        initialize();
-    }
-
-    private void initialize() {
         frame.setResizable(false);
         frame.setTitle("University Online - Game Server");
         frame.setBounds(100, 100, 476, 288);
@@ -57,6 +51,7 @@ public class ConsoleGUI {
 
         frame.getContentPane().add(scroller);
         frame.setVisible(true);
+        commands.add(new AccountCommandHandler());
     }
 
     private void parseCommand(String cmd) {
