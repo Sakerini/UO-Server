@@ -74,6 +74,7 @@ public class AccountServiceImpl implements AccountService {
                     e.printStackTrace();
                     return QueueStatus.Error;
                 }
+                accounts.remove(account);
                 return QueueStatus.Success;
             }
         }
