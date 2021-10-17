@@ -3,13 +3,17 @@ package com.noetic.server;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
+import com.noetic.server.domain.model.Account;
 import com.noetic.server.network.connections.AuthConnection;
 import com.noetic.server.network.connections.WorldConnection;
 import com.noetic.server.enums.LogType;
 import com.noetic.server.network.Network;
+import com.noetic.server.network.handler.CharacterHandler;
 import com.noetic.server.network.handler.LoginHandler;
 import com.noetic.server.network.handler.PacketHandler;
 import com.noetic.server.network.packets.APacket;
+import com.noetic.server.network.packets.CharacterCreateCSPacket;
+import com.noetic.server.service.impl.AccountServiceImpl;
 import com.noetic.server.utils.Configuration;
 
 import java.io.IOException;
@@ -35,8 +39,12 @@ public class GameServer {
 
         consoleGUI = new ConsoleGUI();
         consoleGUI.initialize(this);
+        AccountServiceImpl.loadAccounts();
 
         packetHandlers.put("cs_login", new LoginHandler());
+        CharacterHandler characterHandler = new CharacterHandler();
+        packetHandlers.put("cs_character_list", characterHandler);
+        packetHandlers.put("cs_character_create", characterHandler);
 
         authServer = new Server() {
             protected Connection newConnection() {

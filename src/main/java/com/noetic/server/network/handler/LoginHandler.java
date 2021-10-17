@@ -9,6 +9,7 @@ import com.noetic.server.network.connections.AuthConnection;
 import com.noetic.server.network.packets.LoginCSPacket;
 import com.noetic.server.network.packets.LoginSCPacket;
 import com.noetic.server.service.AccountService;
+import com.noetic.server.service.impl.AccountServiceImpl;
 import com.noetic.server.utils.BCrypt;
 
 import java.util.Objects;
@@ -22,7 +23,7 @@ public class LoginHandler implements PacketHandler {
     private final static int INCORRECT = 1;
     private final static int OK = 0;
 
-    private AccountService accountService;
+    private AccountService accountService = new AccountServiceImpl();
 
     @Override
     public void handlePacket(Server server, Connection connection, APacket packet) {
