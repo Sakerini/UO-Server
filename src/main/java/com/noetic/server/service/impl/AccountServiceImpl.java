@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 public class AccountServiceImpl implements AccountService {
     private static final List<Account> accounts = new ArrayList<>();
 
-    public AccountServiceImpl() {
+    public static void loadAccounts(){
         File[] accFiles = new File(Configuration.accountDataPath).listFiles();
         if (Objects.nonNull(accFiles)) {
             for (File file : accFiles) {
@@ -31,6 +31,7 @@ public class AccountServiceImpl implements AccountService {
                     }
                 }
             }
+            List<Account> tmp = accounts;
             GameServer.getServerConsole().writeMessage(LogType.Server, ("Loaded " + accounts.size() + " accounts"));
         }
     }
@@ -113,7 +114,7 @@ public class AccountServiceImpl implements AccountService {
         return false;
     }
 
-    private void loadAccount(File data) {
+    private static void loadAccount(File data) {
         try {
             DataInputStream stream = new DataInputStream(new FileInputStream(data));
             Account account = new Account();
