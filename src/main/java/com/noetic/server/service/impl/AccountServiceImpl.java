@@ -2,6 +2,7 @@ package com.noetic.server.service.impl;
 
 import com.noetic.server.GameServer;
 import com.noetic.server.domain.model.Account;
+import com.noetic.server.domain.model.GameCharacter;
 import com.noetic.server.enums.AccountLevel;
 import com.noetic.server.enums.LogType;
 import com.noetic.server.enums.QueueStatus;
@@ -127,11 +128,37 @@ public class AccountServiceImpl implements AccountService {
                     account.setSecurity(accountLevel);
                 }
             }
+            loadCharacters(account);
             accounts.add(account);
             stream.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
+    private static void loadCharacters(Account account) {
+        File characterFolder = new File(Configuration.accountDataPath + "/"+ account.getUsername() + "/Characters");
+        if (characterFolder.exists()) {
+            File[] characters = characterFolder.listFiles();
+            if (Objects.nonNull(characters) && characters.length > 0) {
+                for (File dataFile : characters) {
+                    readCharacters(dataFile, account);
+                }
+            }
+            Logger.getLogger("server").log(Level.INFO, "Loaded {0} characters on account {1}.",
+                    new Object[] { account.getCharacters().size(), account.getUsername() });
+        }
+    }
+
+    private static void readCharacters(File dataFile, Account account) {
+        try (DataInputStream stream = new DataInputStream(new FileInputStream(dataFile))) {
+            GameCharacter character = new GameCharacter();
+            character.setName(stream.readUTF());
+            character.setZoneID(stream.readByte());
+            character.setGenderID(stream.readByte());
+            account.getCharacters().add(character);
+        } catch (IOException ex) {
+            Logger.getLogger("server").log(Level.SEVERE, "Failed to load character; {0}", ex.getMessage());
+        }
     }
 }
