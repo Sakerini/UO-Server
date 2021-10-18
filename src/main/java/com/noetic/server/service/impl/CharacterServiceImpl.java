@@ -28,7 +28,7 @@ public class CharacterServiceImpl implements CharacterService {
             }
             try {
                 DataOutputStream stream = new DataOutputStream(new FileOutputStream(characterFile));
-                int zone = 0;
+                int zone = 1;
                 stream.writeUTF(name);
                 stream.writeByte(zone);
                 stream.writeByte(gender);

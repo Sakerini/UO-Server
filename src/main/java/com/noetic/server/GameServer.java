@@ -11,10 +11,12 @@ import com.noetic.server.network.Network;
 import com.noetic.server.network.handler.CharacterHandler;
 import com.noetic.server.network.handler.LoginHandler;
 import com.noetic.server.network.handler.PacketHandler;
+import com.noetic.server.network.handler.WorldHandler;
 import com.noetic.server.network.packets.APacket;
 import com.noetic.server.network.packets.CharacterCreateCSPacket;
 import com.noetic.server.service.impl.AccountServiceImpl;
 import com.noetic.server.utils.Configuration;
+import com.noetic.server.utils.ZoneManager;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -43,8 +45,11 @@ public class GameServer {
 
         packetHandlers.put("cs_login", new LoginHandler());
         CharacterHandler characterHandler = new CharacterHandler();
+        WorldHandler worldHandler = new WorldHandler();
         packetHandlers.put("cs_character_list", characterHandler);
         packetHandlers.put("cs_character_create", characterHandler);
+        packetHandlers.put("cs_world_connection", worldHandler);
+        packetHandlers.put("cs_movement", worldHandler);
 
         authServer = new Server() {
             protected Connection newConnection() {
@@ -52,6 +57,7 @@ public class GameServer {
             }
         };
 
+        ZoneManager.initialize(this);
 
         authServer.start();
         authServer.bind(Integer.parseInt(Configuration.authServerPort));
@@ -77,6 +83,8 @@ public class GameServer {
             }
         });
 
+        Network.setAuthServer(authServer);
+
         world = new Server() {
             protected Connection newConnection() {
                 return new WorldConnection();
@@ -100,6 +108,8 @@ public class GameServer {
 
             }
         });
+
+        Network.setWorldServer(world);
 
         if (Objects.nonNull(world) && Objects.nonNull(authServer)) {
             String msg = String.format("World Server started on ports: %s, %s",

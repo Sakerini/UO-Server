@@ -8,4 +8,5 @@ public class GameCharacter {
     private String name;
     private int zoneID;
     private int genderID;
+    private float X, Y;
 }

@@ -14,7 +14,6 @@ public class Account {
     private AccountLevel security;
     private List<GameCharacter> characters = new ArrayList<>();
     private GameCharacter onlineCharacter;
-    private int realmID;
 
     public void RemoveCharacter(String name) {
         characters.removeIf(n -> n.getName().equalsIgnoreCase(name));
